@@ -7,11 +7,11 @@ import java.util.HashSet;
 import java.util.Set;
 
 public class ParkingLot {
-    private final int capacity;
+    private final int parkingLotCapacity;
 
     Set<Parkable> storage = new HashSet<>();
     public ParkingLot(int parkingLotCapacity) {
-        this.capacity = parkingLotCapacity;
+        this.parkingLotCapacity = parkingLotCapacity;
     }
 
     public void park(Parkable carToBeParked) throws ParkingLotFullException, AlreadyParkedException {
@@ -19,7 +19,7 @@ public class ParkingLot {
         {
             throw new AlreadyParkedException("Can't park an already parked car");
         }
-        if(capacity == storage.size())
+        if(parkingLotCapacity == storage.size())
         {
             throw new ParkingLotFullException("Parking Lot doesn't have enough space");
         }
