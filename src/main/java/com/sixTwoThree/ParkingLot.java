@@ -31,7 +31,7 @@ public class ParkingLot {
             throw new ParkingLotFullException("Parking Lot doesn't have enough space");
         }
         parkingLotStorage.add(carToBeParked);
-        if(isFull())
+        if(isFull() && owner!= null)
         {
             owner.notifyWhenParkingLotIsFull();
         }
