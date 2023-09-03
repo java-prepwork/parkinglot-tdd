@@ -1,6 +1,8 @@
 package com.sixTwoThree;
 
 import exception.AlreadyParkedException;
+import exception.NotParkedException;
+import exception.ParkingLotEmptyException;
 import exception.ParkingLotFullException;
 
 import java.util.HashSet;
@@ -9,21 +11,33 @@ import java.util.Set;
 public class ParkingLot {
     private final int parkingLotCapacity;
 
-    Set<Parkable> storage = new HashSet<>();
+    Set<Parkable> parkingLotStorage = new HashSet<>();
     public ParkingLot(int parkingLotCapacity) {
         this.parkingLotCapacity = parkingLotCapacity;
     }
 
     public void park(Parkable carToBeParked) throws ParkingLotFullException, AlreadyParkedException {
-        if(storage.contains(carToBeParked))
+        if(parkingLotStorage.contains(carToBeParked))
         {
             throw new AlreadyParkedException("Can't park an already parked car");
         }
-        if(parkingLotCapacity == storage.size())
+        if(parkingLotCapacity == parkingLotStorage.size())
         {
             throw new ParkingLotFullException("Parking Lot doesn't have enough space");
         }
-        storage.add(carToBeParked);
+        parkingLotStorage.add(carToBeParked);
+    }
+
+    public void unpark(Parkable carToBeUnParked) throws NotParkedException, ParkingLotEmptyException {
+        if(parkingLotStorage.isEmpty())
+        {
+            throw new ParkingLotEmptyException("The parking lot is already empty");
+        }
+        if(!parkingLotStorage.contains(carToBeUnParked)) {
+            throw new NotParkedException("The car is not parked.");
+        }
+        parkingLotStorage.remove(carToBeUnParked);
+
     }
 }
 
