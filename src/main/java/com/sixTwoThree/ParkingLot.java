@@ -10,7 +10,7 @@ import java.util.Set;
 
 public class ParkingLot {
     private final int parkingLotCapacity;
-    ParkingLotOwner owner;
+    ParkingLotObservers parkingLotObservers = new ParkingLotObservers();
     TrafficPolice police;
 
     Set<Parkable> parkingLotStorage = new HashSet<>();
@@ -32,9 +32,9 @@ public class ParkingLot {
             throw new ParkingLotFullException("Parking Lot doesn't have enough space");
         }
         parkingLotStorage.add(carToBeParked);
-        if(isFull() && owner!= null)
+        if(isFull() )
         {
-            owner.notifyWhenParkingLotIsFull();
+            parkingLotObservers.notifyAllObserver();
         }
         if(isFull() && police != null)
         {
@@ -54,13 +54,11 @@ public class ParkingLot {
 
     }
 
-    public void assignOwner(ParkingLotOwner parkingLotOwner) {
-        this.owner = parkingLotOwner;
+    public void assign(ParkingLotObserver parkingLotObserver) {
+        parkingLotObservers.add(parkingLotObserver);
     }
 
-    public void assignTrafficPolice(TrafficPolice trafficPolice) {
-        this.police = trafficPolice;
-    }
+
 }
 
 

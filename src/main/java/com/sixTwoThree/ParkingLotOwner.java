@@ -1,5 +1,5 @@
 package com.sixTwoThree;
 
-public interface ParkingLotOwner {
-    void notifyWhenParkingLotIsFull();
+public interface ParkingLotOwner extends ParkingLotObserver {
+
 }

@@ -16,8 +16,8 @@ public class ParkingLotTest {
 
     private ParkingLot parkingLotOne;
     private ParkingLot parkingLotTwo;
-    private ParkingLotOwner parkingLotOwner;
-    private TrafficPolice trafficPolice;
+    private ParkingLotObserver parkingLotOwner;
+    private ParkingLotObserver trafficPolice;
 
 
     /** Everytime when we're testing the parking lot must be considered to be empty,
@@ -103,17 +103,17 @@ public class ParkingLotTest {
    }
 
     @Nested
-    class Notify{
+    class NotifyOwner{
         @Test
         void toNotifyParkingLotOwnerWhenParkingLotIsFull() throws ParkingLotFullException, AlreadyParkedException {
-            parkingLotOne.assignOwner(parkingLotOwner);
+            parkingLotOne.assign(parkingLotOwner);
             parkingLotOne.park(carOne);
 
             verify(parkingLotOwner,times(1)).notifyWhenParkingLotIsFull();
         }
         @Test
         void toNotifyParkingLotOwnerMultipleTimesWhenParkingLotIsFull() throws ParkingLotFullException, AlreadyParkedException, NotParkedException, ParkingLotEmptyException {
-            parkingLotOne.assignOwner(parkingLotOwner);
+            parkingLotOne.assign(parkingLotOwner);
             parkingLotOne.park(carOne);
             parkingLotOne.unpark(carOne);
             parkingLotOne.park(carTwo);
@@ -122,13 +122,21 @@ public class ParkingLotTest {
 
             verify(parkingLotOwner,times(3)).notifyWhenParkingLotIsFull();
         }
+
+    }
+
+    @Nested
+    class NotifyObserver{
         @Test
-        void toNotifyTrafficPoliceWhenParkingLotIsFull() throws ParkingLotFullException, AlreadyParkedException {
-            parkingLotOne.assignTrafficPolice(trafficPolice);
+        void toNotifyAllTheObserverWhenTheParkingLotIsFull() throws ParkingLotFullException, AlreadyParkedException {
+            parkingLotOne.assign(parkingLotOwner);
+            parkingLotOne.assign(trafficPolice);
+
             parkingLotOne.park(carOne);
-            verify(trafficPolice,times(1)).notifyWhenParkingLotIsFull();
+            verify(parkingLotOwner,times(1)).notifyWhenParkingLotIsFull();
         }
     }
+
 
 
 }
