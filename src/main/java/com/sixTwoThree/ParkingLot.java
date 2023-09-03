@@ -10,10 +10,15 @@ import java.util.Set;
 
 public class ParkingLot {
     private final int parkingLotCapacity;
+    ParkingLotOwner owner;
 
     Set<Parkable> parkingLotStorage = new HashSet<>();
     public ParkingLot(int parkingLotCapacity) {
         this.parkingLotCapacity = parkingLotCapacity;
+    }
+
+    private boolean isFull(){
+        return parkingLotCapacity == parkingLotStorage.size();
     }
 
     public void park(Parkable carToBeParked) throws ParkingLotFullException, AlreadyParkedException {
@@ -21,11 +26,15 @@ public class ParkingLot {
         {
             throw new AlreadyParkedException("Can't park an already parked car");
         }
-        if(parkingLotCapacity == parkingLotStorage.size())
+        if(isFull())
         {
             throw new ParkingLotFullException("Parking Lot doesn't have enough space");
         }
         parkingLotStorage.add(carToBeParked);
+        if(isFull())
+        {
+            owner.notifyWhenParkingLotIsFull();
+        }
     }
 
     public void unpark(Parkable carToBeUnParked) throws NotParkedException, ParkingLotEmptyException {
@@ -38,6 +47,10 @@ public class ParkingLot {
         }
         parkingLotStorage.remove(carToBeUnParked);
 
+    }
+
+    public void assign(ParkingLotOwner parkingLotOwner) {
+        this.owner = parkingLotOwner;
     }
 }
 

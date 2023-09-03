@@ -10,12 +10,13 @@ import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.*;
 
 public class ParkingLotTest {
 
     private ParkingLot parkingLotOne;
     private ParkingLot parkingLotTwo;
+    private ParkingLotOwner parkingLotOwner;
 
 
     /** Everytime when we're testing the parking lot must be considered to be empty,
@@ -24,9 +25,11 @@ public class ParkingLotTest {
     void beforeEach(){
         parkingLotOne = new ParkingLot(1);
         parkingLotTwo = new ParkingLot(2);
+        parkingLotOwner = mock(ParkingLotOwner.class);
     }
     static Parkable carOne;
     static Parkable carTwo;
+
 
     /** --@BeforeAll is static
      *  --because, */
@@ -39,6 +42,7 @@ public class ParkingLotTest {
 
         carOne = mock(Parkable.class);
         carTwo = mock(Parkable.class);
+
     }
 
     @Nested
@@ -96,6 +100,15 @@ public class ParkingLotTest {
        }
    }
 
+    @Nested
+    class Notify{
+        @Test
+        void toNotifyParkingLotOwnerWhenParkingLotIsFull() throws ParkingLotFullException, AlreadyParkedException {
+            parkingLotOne.assign(parkingLotOwner);
+            parkingLotOne.park(carOne);
 
+            verify(parkingLotOwner,times(1)).notifyWhenParkingLotIsFull();
+        }
+    }
 
 }
