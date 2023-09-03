@@ -1,15 +1,15 @@
 package com.sixTwoThree;
 
-import exception.AlreadyParkedException;
-import exception.NotParkedException;
-import exception.ParkingLotEmptyException;
-import exception.ParkingLotFullException;
+import com.sixTwoThree.exception.AlreadyParkedException;
+import com.sixTwoThree.exception.NotParkedException;
+import com.sixTwoThree.exception.ParkingLotEmptyException;
+import com.sixTwoThree.exception.ParkingLotFullException;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.junit.jupiter.api.Assertions.fail;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.mock;
 
 public class ParkingLotTest {
@@ -27,6 +27,7 @@ public class ParkingLotTest {
     }
     static Parkable carOne;
     static Parkable carTwo;
+
     /** --@BeforeAll is static
      *  --because, */
     @BeforeAll
@@ -40,52 +41,61 @@ public class ParkingLotTest {
         carTwo = mock(Parkable.class);
     }
 
-    @Test
-    void ToParkACarWhenTheParkingLotHasSpace(){
-        try{
+    @Nested
+    class Parking{
+        @Test
+        void ToParkACarWhenTheParkingLotHasSpace(){
+            try{
+                parkingLotOne.park(carOne);
+            }
+            catch(Exception exception){
+                /** instead of assertThrow */
+                fail("");
+            }
+        }
+
+        @Test
+        void toThrowExceptionWhenTheParkingLotIsFull() throws ParkingLotFullException, AlreadyParkedException {
             parkingLotOne.park(carOne);
+
+            assertThrows(ParkingLotFullException.class,()-> parkingLotOne.park(carTwo));
         }
-        catch(Exception exception){
-            /** instead of assertThrow */
-            fail("");
-        }
-    }
 
-    @Test
-    void toThrowExceptionWhenTheParkingLotIsFull() throws ParkingLotFullException, AlreadyParkedException {
-         parkingLotOne.park(carOne);
-
-         assertThrows(ParkingLotFullException.class,()-> parkingLotOne.park(carTwo));
-    }
-
-    @Test
-    void toThrowExceptionWhenTheCarIsAlreadyParked() throws ParkingLotFullException, AlreadyParkedException {
-        parkingLotOne.park(carOne);
-        assertThrows(AlreadyParkedException.class, ()-> parkingLotOne.park(carOne));
-    }
-
-    @Test
-    void toUnParkACarWhenTheCarIsAlreadyParked(){
-        try{
+        @Test
+        void toThrowExceptionWhenTheCarIsAlreadyParked() throws ParkingLotFullException, AlreadyParkedException {
             parkingLotOne.park(carOne);
-            parkingLotOne.unpark(carOne);
-        }
-        catch(Exception exception)
-        {
-            fail("car can't be un parked");
+            assertThrows(AlreadyParkedException.class, ()-> parkingLotOne.park(carOne));
         }
     }
 
-    @Test
-    void toThrowExceptionWhenTheCarIsNotParked() throws ParkingLotFullException, AlreadyParkedException, NotParkedException, ParkingLotEmptyException {
-        parkingLotTwo.park(carOne);
-        parkingLotTwo.park(carTwo);
-        parkingLotTwo.unpark(carOne);
-        assertThrows(NotParkedException.class,()-> parkingLotTwo.unpark(carOne));
-    }
+   @Nested
+    class UnParking{
+       @Test
+       void toUnParkACarWhenTheCarIsAlreadyParked(){
+           try{
+               parkingLotOne.park(carOne);
+               parkingLotOne.unpark(carOne);
+           }
+           catch(Exception exception)
+           {
+               fail("car can't be un parked");
+           }
+       }
 
-    @Test
-    void toThrowExceptionWhenTheParkingLotIsEmpty(){
-        assertThrows(ParkingLotEmptyException.class,()->parkingLotOne.unpark(carOne));
-    }
+       @Test
+       void toThrowExceptionWhenTheCarIsNotParked() throws ParkingLotFullException, AlreadyParkedException, NotParkedException, ParkingLotEmptyException {
+           parkingLotTwo.park(carOne);
+           parkingLotTwo.park(carTwo);
+           parkingLotTwo.unpark(carOne);
+           assertThrows(NotParkedException.class,()-> parkingLotTwo.unpark(carOne));
+       }
+
+       @Test
+       void toThrowExceptionWhenTheParkingLotIsEmpty(){
+           assertThrows(ParkingLotEmptyException.class,()->parkingLotOne.unpark(carOne));
+       }
+   }
+
+
+
 }

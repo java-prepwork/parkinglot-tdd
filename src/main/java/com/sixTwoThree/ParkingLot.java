@@ -1,9 +1,9 @@
 package com.sixTwoThree;
 
-import exception.AlreadyParkedException;
-import exception.NotParkedException;
-import exception.ParkingLotEmptyException;
-import exception.ParkingLotFullException;
+import com.sixTwoThree.exception.AlreadyParkedException;
+import com.sixTwoThree.exception.NotParkedException;
+import com.sixTwoThree.exception.ParkingLotEmptyException;
+import com.sixTwoThree.exception.ParkingLotFullException;
 
 import java.util.HashSet;
 import java.util.Set;

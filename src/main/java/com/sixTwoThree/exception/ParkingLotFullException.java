@@ -1,4 +1,4 @@
-package exception;
+package com.sixTwoThree.exception;
 
 import com.sixTwoThree.Parkable;
 import com.sixTwoThree.ParkingLot;
