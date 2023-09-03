@@ -17,6 +17,7 @@ public class ParkingLotTest {
     private ParkingLot parkingLotOne;
     private ParkingLot parkingLotTwo;
     private ParkingLotOwner parkingLotOwner;
+    private TrafficPolice trafficPolice;
 
 
     /** Everytime when we're testing the parking lot must be considered to be empty,
@@ -26,6 +27,7 @@ public class ParkingLotTest {
         parkingLotOne = new ParkingLot(1);
         parkingLotTwo = new ParkingLot(2);
         parkingLotOwner = mock(ParkingLotOwner.class);
+        trafficPolice = mock(TrafficPolice.class);
     }
     static Parkable carOne;
     static Parkable carTwo;
@@ -104,11 +106,29 @@ public class ParkingLotTest {
     class Notify{
         @Test
         void toNotifyParkingLotOwnerWhenParkingLotIsFull() throws ParkingLotFullException, AlreadyParkedException {
-            parkingLotOne.assign(parkingLotOwner);
+            parkingLotOne.assignOwner(parkingLotOwner);
             parkingLotOne.park(carOne);
 
             verify(parkingLotOwner,times(1)).notifyWhenParkingLotIsFull();
         }
+        @Test
+        void toNotifyParkingLotOwnerMultipleTimesWhenParkingLotIsFull() throws ParkingLotFullException, AlreadyParkedException, NotParkedException, ParkingLotEmptyException {
+            parkingLotOne.assignOwner(parkingLotOwner);
+            parkingLotOne.park(carOne);
+            parkingLotOne.unpark(carOne);
+            parkingLotOne.park(carTwo);
+            parkingLotOne.unpark(carTwo);
+            parkingLotOne.park(carOne);
+
+            verify(parkingLotOwner,times(3)).notifyWhenParkingLotIsFull();
+        }
+        @Test
+        void toNotifyTrafficPoliceWhenParkingLotIsFull() throws ParkingLotFullException, AlreadyParkedException {
+            parkingLotOne.assignTrafficPolice(trafficPolice);
+            parkingLotOne.park(carOne);
+            verify(trafficPolice,times(1)).notifyWhenParkingLotIsFull();
+        }
     }
+
 
 }

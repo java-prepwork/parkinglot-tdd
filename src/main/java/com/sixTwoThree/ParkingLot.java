@@ -11,6 +11,7 @@ import java.util.Set;
 public class ParkingLot {
     private final int parkingLotCapacity;
     ParkingLotOwner owner;
+    TrafficPolice police;
 
     Set<Parkable> parkingLotStorage = new HashSet<>();
     public ParkingLot(int parkingLotCapacity) {
@@ -35,6 +36,10 @@ public class ParkingLot {
         {
             owner.notifyWhenParkingLotIsFull();
         }
+        if(isFull() && police != null)
+        {
+            police.notifyWhenParkingLotIsFull();
+        }
     }
 
     public void unpark(Parkable carToBeUnParked) throws NotParkedException, ParkingLotEmptyException {
@@ -49,8 +54,12 @@ public class ParkingLot {
 
     }
 
-    public void assign(ParkingLotOwner parkingLotOwner) {
+    public void assignOwner(ParkingLotOwner parkingLotOwner) {
         this.owner = parkingLotOwner;
+    }
+
+    public void assignTrafficPolice(TrafficPolice trafficPolice) {
+        this.police = trafficPolice;
     }
 }
 
