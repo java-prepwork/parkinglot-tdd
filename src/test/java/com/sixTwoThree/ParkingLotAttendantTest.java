@@ -1,8 +1,6 @@
 package com.sixTwoThree;
 
-import com.sixTwoThree.exception.AllParkingLotFullException;
-import com.sixTwoThree.exception.AlreadyParkedException;
-import com.sixTwoThree.exception.ParkingLotFullException;
+import com.sixTwoThree.exception.*;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Nested;
@@ -17,6 +15,9 @@ public class ParkingLotAttendantTest {
     static Parkable carTwo;
     static Parkable carThree;
     static Parkable carFour;
+    static Parkable carFive;
+    static Parkable carSix;
+    static Parkable carSeven;
     ParkingLotAttendant parkingLotAttendant;
     ParkingLot parkingLotOne;
     ParkingLot parkingLotTwo;
@@ -28,6 +29,9 @@ public class ParkingLotAttendantTest {
         carTwo = mock(Parkable.class);
         carThree = mock(Parkable.class);
         carFour = mock(Parkable.class);
+        carFive = mock(Parkable.class);
+        carSix = mock(Parkable.class);
+        carSeven = mock(Parkable.class);
     }
 
     @BeforeEach
@@ -93,5 +97,44 @@ public class ParkingLotAttendantTest {
         }
     }
 
+    @Nested
+    class Unparking{
+
+        @Test
+        void toParkAnUnparkCarFromTheOnlyManagedLot() throws ParkingLotFullException, AlreadyParkedException, AllParkingLotFullException, NotParkedException, ParkingLotEmptyException {
+            parkingLotAttendant.isResponsibleFor(parkingLotTwo);
+
+            parkingLotAttendant.directs(carOne);
+            parkingLotAttendant.redirects(carOne);
+            parkingLotAttendant.directs(carOne);
+
+            assertThrows(AlreadyParkedException.class, ()-> parkingLotTwo.park(carOne));
+        }
+
+        @Test
+        void toThrowExceptionWhenAttendantUnparksANotParkedCar(){
+            parkingLotAttendant.isResponsibleFor(parkingLotOne);
+
+            assertThrows(NotParkedException.class,()-> parkingLotAttendant.redirects(carOne));
+        }
+
+        @Test
+        void toParkACarAfterTheFullLotBecameAvailable() throws ParkingLotFullException, AlreadyParkedException, AllParkingLotFullException, NotParkedException, ParkingLotEmptyException {
+            parkingLotAttendant.isResponsibleFor(parkingLotTwo);
+            parkingLotAttendant.isResponsibleFor(parkingLotThree);
+
+            parkingLotAttendant.directs(carOne);
+            parkingLotAttendant.directs(carTwo);
+            parkingLotAttendant.directs(carThree);
+            parkingLotAttendant.directs(carFour);
+            parkingLotAttendant.directs(carFive);
+
+            parkingLotAttendant.redirects(carTwo);
+            parkingLotAttendant.directs(carSix);
+            parkingLotAttendant.redirects(carFive);
+
+            assertThrows(ParkingLotFullException.class,()-> parkingLotTwo.park(carSeven));
+        }
+    }
 
 }
