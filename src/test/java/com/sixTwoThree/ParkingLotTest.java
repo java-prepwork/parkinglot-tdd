@@ -26,8 +26,8 @@ public class ParkingLotTest {
     void beforeEach(){
         parkingLotOne = new ParkingLot(1);
         parkingLotTwo = new ParkingLot(2);
-        parkingLotOwner = mock(ParkingLotOwner.class);
-        trafficPolice = mock(TrafficPolice.class);
+        parkingLotOwner = mock(ParkingLotObserver.class);
+        trafficPolice = mock(ParkingLotObserver.class);
     }
     static Parkable carOne;
     static Parkable carTwo;
@@ -109,7 +109,7 @@ public class ParkingLotTest {
             parkingLotOne.assign(parkingLotOwner);
             parkingLotOne.park(carOne);
 
-            verify(parkingLotOwner,times(1)).notifyWhenParkingLotIsFull();
+            verify(parkingLotOwner,times(1)).notifyWhenParkingLotIsFull(parkingLotOne);
         }
         @Test
         void toNotifyParkingLotOwnerMultipleTimesWhenParkingLotIsFull() throws ParkingLotFullException, AlreadyParkedException, NotParkedException, ParkingLotEmptyException {
@@ -120,23 +120,54 @@ public class ParkingLotTest {
             parkingLotOne.unpark(carTwo);
             parkingLotOne.park(carOne);
 
-            verify(parkingLotOwner,times(3)).notifyWhenParkingLotIsFull();
+            verify(parkingLotOwner,times(3)).notifyWhenParkingLotIsFull(parkingLotOne);
+        }
+
+        @Test
+        void notToNotifyWhenTheParkingLotIsNotFull() throws ParkingLotFullException, AlreadyParkedException{
+            parkingLotTwo.assign(parkingLotOwner);
+            parkingLotTwo.park(carOne);
+
+            verify(parkingLotOwner,never()).notifyWhenParkingLotIsFull(parkingLotTwo);
         }
 
     }
 
     @Nested
-    class NotifyObserver{
+    class NotifyObserverWhenFull {
         @Test
         void toNotifyAllTheObserverWhenTheParkingLotIsFull() throws ParkingLotFullException, AlreadyParkedException {
             parkingLotOne.assign(parkingLotOwner);
             parkingLotOne.assign(trafficPolice);
 
             parkingLotOne.park(carOne);
-            verify(parkingLotOwner,times(1)).notifyWhenParkingLotIsFull();
+            verify(parkingLotOwner,times(1)).notifyWhenParkingLotIsFull(parkingLotOne);
+            verify(trafficPolice,times(1)).notifyWhenParkingLotIsFull(parkingLotOne);
         }
     }
 
+    @Nested
+    class NotifyObserverGetsFree{
+        @Test
+        void toNotifyAllTheObserverWhenTheLotIsFreeAfterFull() throws ParkingLotFullException, AlreadyParkedException, NotParkedException, ParkingLotEmptyException {
+            parkingLotTwo.assign(parkingLotOwner);
+            parkingLotTwo.assign(trafficPolice);
 
+            parkingLotTwo.park(carOne);
+            parkingLotTwo.park(carTwo);
+            parkingLotTwo.unpark(carOne);
+            verify(parkingLotOwner,times(1)).notifyWhenParkingLotGetsFree(parkingLotTwo);
+            verify(trafficPolice,times(1)).notifyWhenParkingLotGetsFree(parkingLotTwo);
+        }
+
+        @Test
+        void notToNotifyWhenTheParkingLotIsFree() throws ParkingLotFullException, AlreadyParkedException{
+            parkingLotTwo.assign(parkingLotOwner);
+            parkingLotTwo.park(carOne);
+
+            verify(parkingLotOwner,never()).notifyWhenParkingLotIsFull(parkingLotTwo);
+            verify(trafficPolice,never()).notifyWhenParkingLotIsFull(parkingLotTwo);
+        }
+    }
 
 }

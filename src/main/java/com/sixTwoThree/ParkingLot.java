@@ -11,14 +11,13 @@ import java.util.Set;
 public class ParkingLot {
     private final int parkingLotCapacity;
     ParkingLotObservers parkingLotObservers = new ParkingLotObservers();
-    TrafficPolice police;
 
     Set<Parkable> parkingLotStorage = new HashSet<>();
     public ParkingLot(int parkingLotCapacity) {
         this.parkingLotCapacity = parkingLotCapacity;
     }
 
-    private boolean isFull(){
+    public boolean isFull(){
         return parkingLotCapacity == parkingLotStorage.size();
     }
 
@@ -34,12 +33,9 @@ public class ParkingLot {
         parkingLotStorage.add(carToBeParked);
         if(isFull() )
         {
-            parkingLotObservers.notifyAllObserver();
+            parkingLotObservers.notifyAllObserverWhenParkingLotIsFull(this);
         }
-        if(isFull() && police != null)
-        {
-            police.notifyWhenParkingLotIsFull();
-        }
+
     }
 
     public void unpark(Parkable carToBeUnParked) throws NotParkedException, ParkingLotEmptyException {
@@ -50,14 +46,18 @@ public class ParkingLot {
         if(!parkingLotStorage.contains(carToBeUnParked)) {
             throw new NotParkedException("The car is not parked.");
         }
+        if(isFull())
+        {
+            parkingLotObservers.notifyAllObserverWhenParkingLotGetsFree(this);
+        }
         parkingLotStorage.remove(carToBeUnParked);
+
 
     }
 
     public void assign(ParkingLotObserver parkingLotObserver) {
         parkingLotObservers.add(parkingLotObserver);
     }
-
 
 }
 

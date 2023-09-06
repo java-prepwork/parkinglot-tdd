@@ -4,9 +4,16 @@ import java.util.ArrayList;
 
 public class ParkingLotObservers extends ArrayList<ParkingLotObserver> {
 
-    public void notifyAllObserver() {
+    public void notifyAllObserverWhenParkingLotIsFull(ParkingLot parkingLot) {
         for(ParkingLotObserver parkingLotObserver : this){
-            parkingLotObserver.notifyWhenParkingLotIsFull();
+            parkingLotObserver.notifyWhenParkingLotIsFull(parkingLot);
+        }
+    }
+
+    public void notifyAllObserverWhenParkingLotGetsFree(ParkingLot parkingLot) {
+        for(ParkingLotObserver parkingLotObserver : this)
+        {
+            parkingLotObserver.notifyWhenParkingLotGetsFree(parkingLot);
         }
     }
 }
