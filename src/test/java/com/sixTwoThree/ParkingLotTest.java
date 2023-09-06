@@ -18,6 +18,8 @@ public class ParkingLotTest {
     private ParkingLot parkingLotTwo;
     private ParkingLotObserver parkingLotOwner;
     private ParkingLotObserver trafficPolice;
+    static Parkable carOne;
+    static Parkable carTwo;
 
 
     /** Everytime when we're testing the parking lot must be considered to be empty,
@@ -29,9 +31,6 @@ public class ParkingLotTest {
         parkingLotOwner = mock(ParkingLotOwner.class);
         trafficPolice = mock(TrafficPolice.class);
     }
-    static Parkable carOne;
-    static Parkable carTwo;
-
 
     /** --@BeforeAll is static
      *  --because, */
@@ -106,21 +105,21 @@ public class ParkingLotTest {
     class NotifyOwner{
         @Test
         void toNotifyParkingLotOwnerWhenParkingLotIsFull() throws ParkingLotFullException, AlreadyParkedException {
-            parkingLotOne.assign(parkingLotOwner);
+            parkingLotOne.assignObserver(parkingLotOwner);
             parkingLotOne.park(carOne);
 
-            verify(parkingLotOwner,times(1)).notifyWhenParkingLotIsFull();
+            verify(parkingLotOwner,times(1)).notifyWhenParkingLotIsFull(parkingLotOne);
         }
         @Test
         void toNotifyParkingLotOwnerMultipleTimesWhenParkingLotIsFull() throws ParkingLotFullException, AlreadyParkedException, NotParkedException, ParkingLotEmptyException {
-            parkingLotOne.assign(parkingLotOwner);
+            parkingLotOne.assignObserver(parkingLotOwner);
             parkingLotOne.park(carOne);
             parkingLotOne.unpark(carOne);
             parkingLotOne.park(carTwo);
             parkingLotOne.unpark(carTwo);
             parkingLotOne.park(carOne);
 
-            verify(parkingLotOwner,times(3)).notifyWhenParkingLotIsFull();
+            verify(parkingLotOwner,times(3)).notifyWhenParkingLotIsFull(parkingLotOne);
         }
 
     }
@@ -129,11 +128,11 @@ public class ParkingLotTest {
     class NotifyObserver{
         @Test
         void toNotifyAllTheObserverWhenTheParkingLotIsFull() throws ParkingLotFullException, AlreadyParkedException {
-            parkingLotOne.assign(parkingLotOwner);
-            parkingLotOne.assign(trafficPolice);
+            parkingLotOne.assignObserver(parkingLotOwner);
+            parkingLotOne.assignObserver(trafficPolice);
 
             parkingLotOne.park(carOne);
-            verify(parkingLotOwner,times(1)).notifyWhenParkingLotIsFull();
+            verify(parkingLotOwner,times(1)).notifyWhenParkingLotIsFull(parkingLotOne);
         }
     }
 

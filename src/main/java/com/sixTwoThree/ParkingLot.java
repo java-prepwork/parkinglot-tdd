@@ -18,8 +18,11 @@ public class ParkingLot {
         this.parkingLotCapacity = parkingLotCapacity;
     }
 
-    private boolean isFull(){
+    boolean isFull(){
         return parkingLotCapacity == parkingLotStorage.size();
+    }
+    private boolean fullBeforeUnpark(){
+        return (parkingLotCapacity - 1) == parkingLotStorage.size();
     }
 
     public void park(Parkable carToBeParked) throws ParkingLotFullException, AlreadyParkedException {
@@ -34,11 +37,7 @@ public class ParkingLot {
         parkingLotStorage.add(carToBeParked);
         if(isFull() )
         {
-            parkingLotObservers.notifyAllObserver();
-        }
-        if(isFull() && police != null)
-        {
-            police.notifyWhenParkingLotIsFull();
+            parkingLotObservers.notifyAllObserver(this);
         }
     }
 
@@ -51,10 +50,13 @@ public class ParkingLot {
             throw new NotParkedException("The car is not parked.");
         }
         parkingLotStorage.remove(carToBeUnParked);
-
+        if (fullBeforeUnpark())
+        {
+            parkingLotObservers.notifyWhenParkingLotIsAvailable(this);
+        }
     }
 
-    public void assign(ParkingLotObserver parkingLotObserver) {
+    public void assignObserver(ParkingLotObserver parkingLotObserver) {
         parkingLotObservers.add(parkingLotObserver);
     }
 
